@@ -147,8 +147,9 @@ scene.onCreate = function() {
 
 				t_pivot.onUpdate = function(){
 					if(IconGlows[this.n].getAlpha() != 0) {
-						//this.setTranslationX(0);
-						//this.setTranslationY(0);
+						this.animate().duration(OrganWobbleTime*1000/30)
+							.translationX(0)
+							.translationY(0);
 						this.setScale(Pulse.getScale()[0]);
 					} else {
 						this.wobble++;
