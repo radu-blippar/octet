@@ -44,6 +44,7 @@ var IconGlows = [];
 var Clickables = [];
 
 var OrganWobbleRadius = 4;
+var OrganWobbleTime = 5; // Frames
 
 function SetOrgans(){
 	for (var i = 0; i < Organs.length; i++) {
@@ -134,6 +135,7 @@ scene.onCreate = function() {
 	DrugClasses = Screen.addSprite(['DrugClasses.png','DrugClasses-A.png'])
 								.setScale(1024,32,1).setTranslationY(-213);
 
+
 	for (var i = 0; i < Organs.length; i++) {
 		var t =  Screen.addTransform()
 				.setTranslationX(Organs[i][1][0])
@@ -141,15 +143,21 @@ scene.onCreate = function() {
 
 				t_pivot = t.addSprite('trans.png');
 				t_pivot.n = i;
+				t_pivot.wobble = 0;
 
 				t_pivot.onUpdate = function(){
 					if(IconGlows[this.n].getAlpha() != 0) {
-						this.setTranslationX(0);
-						this.setTranslationY(0);
+						//this.setTranslationX(0);
+						//this.setTranslationY(0);
 						this.setScale(Pulse.getScale()[0]);
 					} else {
-						this.setTranslationX(OrganWobbleRadius*(Math.random() - 0.5));
-						this.setTranslationY(OrganWobbleRadius*(Math.random() - 0.5));
+						this.wobble++;
+						if(this.wobble >= OrganWobbleTime){
+							this.wobble = 0;
+							this.animate().duration(OrganWobbleTime*1000/30)
+								.translationX(OrganWobbleRadius*(Math.random() - 0.5))
+								.translationY(OrganWobbleRadius*(Math.random() - 0.5));
+						}
 					}
 				}
 
@@ -220,6 +228,15 @@ scene.onCreate = function() {
 				}
 
 				SetOrgans()
+			}
+
+			glow = b.addSprite().setColor(Drugs[i][3]).setAlpha(0);
+			glow.n = i;
+			glow.onDraw = function(){
+				this.animate().alpha(1).duration(800).delay(this.n*150).onEnd = function(){
+					this.animate().alpha(0).duration(800);
+				}
+				return 1
 			}
 
 			text = t.addSprite()
@@ -369,4 +386,4 @@ scene.onCreate = function() {
 	Clickables.push(References_Button);
 }
 
-//scene.onTouchMove = function (){ blipp.goToBlipp(blipp.getAddress()) }
+scene.onTouchMove = function (){ blipp.goToBlipp(blipp.getAddress()) }
