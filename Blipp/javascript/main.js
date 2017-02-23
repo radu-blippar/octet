@@ -65,7 +65,11 @@ var Clickables = [];
 
 var OrganWobbleRadius = 4;
 var OrganWobbleTime = 12; // Frames
-var PopUpDelay = 3; // s
+var PopUpDelay = 8; // s
+var ActivePopUp = 0;
+var VisiblePopUp = false;
+var Clicks = 0;
+var MinClicksForPopUp = 2;
 
 function SetOrgans() {
   for (var i = 0; i < Organs.length; i++) {
@@ -99,48 +103,56 @@ var CurrentPopUps;
 var PopUpScaler = 0.7;
 
 function StartPopUp(popups, closeDark) {
-  CurrentPopUps = popups;
-  Dark.setHidden(false);
-  Dark.setAlpha(0);
-  Dark.animate().alpha(0.6).duration(500);
-  Dark.setClickable(closeDark);
-  for (i = 0; i < CurrentPopUps.length; i++) {
-    CurrentPopUps[i].setHidden(false).setAlpha(0);
-    var s = CurrentPopUps[i].getScale();
-    s[0] *= PopUpScaler;
-    s[1] *= PopUpScaler;
-    s[2] *= PopUpScaler;
-    CurrentPopUps[i].setScale(s)
-    CurrentPopUps[i].animate().alpha(1).duration(500);
-    CurrentPopUps[i].animate().duration(300)
-      .scaleX(s[0]/PopUpScaler)
-      .scaleY(s[1]/PopUpScaler)
-      .scaleZ(s[2]/PopUpScaler)
-      .interpolator('easeOut');
+  if(!VisiblePopUp){
+    VisiblePopUp = true;
+    CurrentPopUps = popups;
+    Dark.setHidden(false);
+    Dark.setAlpha(0);
+    Dark.animate().alpha(0.6).duration(500);
+    Dark.setClickable(closeDark);
+    for (i = 0; i < CurrentPopUps.length; i++) {
+      CurrentPopUps[i].setHidden(false).setAlpha(0);
+      var s = CurrentPopUps[i].getScale();
+      s[0] *= PopUpScaler;
+      s[1] *= PopUpScaler;
+      s[2] *= PopUpScaler;
+      CurrentPopUps[i].setScale(s)
+      CurrentPopUps[i].animate().alpha(1).duration(500);
+      CurrentPopUps[i].animate().duration(300)
+        .scaleX(s[0]/PopUpScaler)
+        .scaleY(s[1]/PopUpScaler)
+        .scaleZ(s[2]/PopUpScaler)
+        .interpolator('easeOut');
+    }
+    for (i = 0; i < Clickables.length; i++) {
+      Clickables[i].setClickable(false);
+    }
+    Close_Button.OFF();
   }
-  for (i = 0; i < Clickables.length; i++) {
-    Clickables[i].setClickable(false);
-  }
-  Close_Button.OFF();
 }
 
 function StartPopUp_0() {
+  ActivePopUp++
   StartPopUp([PopUp_0, PopUp_0_Back], false)
 }
 
 function StartPopUp_1() {
+  ActivePopUp++
   StartPopUp([PopUp_1, PopUp_1_Back, PopUp_1_Link], false)
 }
 
 function StartPopUp_2() {
+  ActivePopUp++
   StartPopUp([PopUp_2, PopUp_2_Back, PopUp_2_Link], false)
 }
 
 function StartPopUp_3() {
+  ActivePopUp++
   StartPopUp([PopUp_3, PopUp_3_Back, PopUp_3_Link], false)
 }
 
-function EndPopUp() {
+function EndPopUp(next) {
+  VisiblePopUp = false;
   Close_Button.ON();
   Dark.setHidden(true);
   for (i = 0; i < CurrentPopUps.length; i++) {
@@ -148,6 +160,45 @@ function EndPopUp() {
   }
   for (i = 0; i < Clickables.length; i++) {
     Clickables[i].setClickable(true);
+  }
+
+  if(next && ActivePopUp<4){
+    scene.animate().duration(PopUpDelay * 1000).onEnd = function(){
+      NextPopUp();
+    }
+  }
+
+  if(!StartedPopUps){
+    StartedPopUps = true;
+    scene.animate().duration(PopUpDelay * 1000).onEnd = function(){
+      NextPopUp();
+    }
+  }
+}
+
+function NextPopUp(){
+  console.log(ActivePopUp + " - " + VisiblePopUp)
+  if(!VisiblePopUp){
+    switch(ActivePopUp) {
+    case 0:
+        StartPopUp_0();
+        break;
+    case 1:
+        StartPopUp_1();
+        break;
+    case 2:
+        StartPopUp_2();
+        break;
+    case 3:
+        StartPopUp_3();
+        break;
+    } 
+  } else {
+    if(ActivePopUp<4){
+      scene.animate().duration(PopUpDelay * 1000).onEnd = function(){
+        NextPopUp();
+      }
+    }
   }
 }
 
@@ -345,7 +396,7 @@ scene.onCreate = function () {
   Instructions_Button = Screen.addSprite()
     .setTexture(['Instructions_Button_OFF.png', 'Instructions_Button-A.png'])
     .setScale(64)
-    .setTranslationX(-489-96)
+    .setTranslationX(-489 - 96)
     .setHotspot([0, 0.1, 0, 1.6, 1, 1])
     .setTranslationY(0.5 * (1024 * sW / sH) - 42);
 
@@ -356,7 +407,7 @@ scene.onCreate = function () {
   References_Button = Screen.addSprite()
     .setTexture(['References_Button_OFF.png', 'Instructions_Button-A.png'])
     .setScale(64)
-    .setTranslationX(-489-96)
+    .setTranslationX(-489 - 96)
     .setHotspot([0, -0.1, 0, 1.6, 1, 1])
     .setTranslationY(0.5 * (1024 * sW / sH) - 98 - 10);
 
@@ -368,7 +419,7 @@ scene.onCreate = function () {
     .setAlpha(0.6).setHidden(true);
 
   Dark.onTouchEnd = function () {
-    EndPopUp()
+    EndPopUp(false)
   }
 
   Instructions = Screen.addSprite(['Instructions.png', 'Instructions-A.png'])
@@ -399,10 +450,7 @@ scene.onCreate = function () {
     .setHidden(true);
 
   PopUp_0_Back.onTouchEnd = function () {
-    EndPopUp();
-    scene.animate().duration(PopUpDelay*1000).onEnd = function(){
-      StartPopUp_1();
-    }
+    EndPopUp(true);
   }
 
   PopUp_1 = Screen.addSprite(['PopUp_1.png', 'PopUp-A.png'])
@@ -425,10 +473,7 @@ scene.onCreate = function () {
   }
 
   PopUp_1_Back.onTouchEnd = function () {
-    EndPopUp();
-    scene.animate().duration(PopUpDelay*1000).onEnd = function(){
-      StartPopUp_2();
-    }
+    EndPopUp(true);
   }
 
   PopUp_2 = Screen.addSprite(['PopUp_2.png', 'PopUp-A.png'])
@@ -451,10 +496,7 @@ scene.onCreate = function () {
   }
 
   PopUp_2_Back.onTouchEnd = function () {
-    EndPopUp();
-    scene.animate().duration(PopUpDelay*1000).onEnd = function(){
-      StartPopUp_3();
-    }
+    EndPopUp(true);
   }
 
   PopUp_3 = Screen.addSprite(['PopUp_3.png', 'PopUp-A.png'])
@@ -477,9 +519,7 @@ scene.onCreate = function () {
   }
 
   PopUp_3_Back.onTouchEnd = function () {
-    EndPopUp();
-    Instructions_Button.animate().duration(500).interpolator("easeOut").translationX(Instructions_Button.getTranslationX() + 96);
-    References_Button.animate().duration(500).delay(200).interpolator("easeOut").translationX(References_Button.getTranslationX() + 96);
+    EndPopUp(true);
   }
 
   Clickables.push(Instructions_Button);
@@ -491,13 +531,28 @@ scene.onCreate = function () {
     GlowDrugs()
   }
 }
+scene.onShow =  function(){
+  Instructions_Button.animate().duration(500).interpolator("easeOut").translationX(Instructions_Button.getTranslationX() + 96);
+  References_Button.animate().duration(500).delay(200).interpolator("easeOut").translationX(References_Button.getTranslationX() + 96);
+}
 
-scene.onShow = function(){
-  scene.animate().duration(PopUpDelay*1000).onEnd = function(){
-    StartPopUp_0();
+var StartedPopUps = false;
+
+scene.onTouchStart = function () {
+  if(Clicks < MinClicksForPopUp && Clicks != -1){
+    Clicks++;
+  } else {
+    if(Clicks != -1){
+      scene.animate().duration(PopUpDelay*0.25*1000).onEnd = function(){
+        if(!VisiblePopUp){
+          NextPopUp();
+        }
+      }
+    }
+    Clicks = -1;
   }
 }
 
 scene.onTouchMove = function () {
-  blipp.goToBlipp(blipp.getAddress())
+  //blipp.goToBlipp(blipp.getAddress())
 }
