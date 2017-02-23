@@ -65,6 +65,7 @@ var Clickables = [];
 
 var OrganWobbleRadius = 4;
 var OrganWobbleTime = 12; // Frames
+var PopUpDelay = 3; // s
 
 function SetOrgans() {
   for (var i = 0; i < Organs.length; i++) {
@@ -95,13 +96,27 @@ function SetOrgans() {
 }
 
 var CurrentPopUps;
+var PopUpScaler = 0.7;
 
 function StartPopUp(popups, closeDark) {
   CurrentPopUps = popups;
   Dark.setHidden(false);
+  Dark.setAlpha(0);
+  Dark.animate().alpha(0.6).duration(500);
   Dark.setClickable(closeDark);
   for (i = 0; i < CurrentPopUps.length; i++) {
-    CurrentPopUps[i].setHidden(false);
+    CurrentPopUps[i].setHidden(false).setAlpha(0);
+    var s = CurrentPopUps[i].getScale();
+    s[0] *= PopUpScaler;
+    s[1] *= PopUpScaler;
+    s[2] *= PopUpScaler;
+    CurrentPopUps[i].setScale(s)
+    CurrentPopUps[i].animate().alpha(1).duration(500);
+    CurrentPopUps[i].animate().duration(300)
+      .scaleX(s[0]/PopUpScaler)
+      .scaleY(s[1]/PopUpScaler)
+      .scaleZ(s[2]/PopUpScaler)
+      .interpolator('easeOut');
   }
   for (i = 0; i < Clickables.length; i++) {
     Clickables[i].setClickable(false);
@@ -330,7 +345,7 @@ scene.onCreate = function () {
   Instructions_Button = Screen.addSprite()
     .setTexture(['Instructions_Button_OFF.png', 'Instructions_Button-A.png'])
     .setScale(64)
-    .setTranslationX(-489)
+    .setTranslationX(-489-96)
     .setHotspot([0, 0.1, 0, 1.6, 1, 1])
     .setTranslationY(0.5 * (1024 * sW / sH) - 42);
 
@@ -341,7 +356,7 @@ scene.onCreate = function () {
   References_Button = Screen.addSprite()
     .setTexture(['References_Button_OFF.png', 'Instructions_Button-A.png'])
     .setScale(64)
-    .setTranslationX(-489)
+    .setTranslationX(-489-96)
     .setHotspot([0, -0.1, 0, 1.6, 1, 1])
     .setTranslationY(0.5 * (1024 * sW / sH) - 98 - 10);
 
@@ -385,6 +400,9 @@ scene.onCreate = function () {
 
   PopUp_0_Back.onTouchEnd = function () {
     EndPopUp();
+    scene.animate().duration(PopUpDelay*1000).onEnd = function(){
+      StartPopUp_1();
+    }
   }
 
   PopUp_1 = Screen.addSprite(['PopUp_1.png', 'PopUp-A.png'])
@@ -408,6 +426,9 @@ scene.onCreate = function () {
 
   PopUp_1_Back.onTouchEnd = function () {
     EndPopUp();
+    scene.animate().duration(PopUpDelay*1000).onEnd = function(){
+      StartPopUp_2();
+    }
   }
 
   PopUp_2 = Screen.addSprite(['PopUp_2.png', 'PopUp-A.png'])
@@ -431,6 +452,9 @@ scene.onCreate = function () {
 
   PopUp_2_Back.onTouchEnd = function () {
     EndPopUp();
+    scene.animate().duration(PopUpDelay*1000).onEnd = function(){
+      StartPopUp_3();
+    }
   }
 
   PopUp_3 = Screen.addSprite(['PopUp_3.png', 'PopUp-A.png'])
@@ -454,6 +478,8 @@ scene.onCreate = function () {
 
   PopUp_3_Back.onTouchEnd = function () {
     EndPopUp();
+    Instructions_Button.animate().duration(500).interpolator("easeOut").translationX(Instructions_Button.getTranslationX() + 96);
+    References_Button.animate().duration(500).delay(200).interpolator("easeOut").translationX(References_Button.getTranslationX() + 96);
   }
 
   Clickables.push(Instructions_Button);
@@ -466,6 +492,12 @@ scene.onCreate = function () {
   }
 }
 
+scene.onShow = function(){
+  scene.animate().duration(PopUpDelay*1000).onEnd = function(){
+    StartPopUp_0();
+  }
+}
+
 scene.onTouchMove = function () {
-  //blipp.goToBlipp(blipp.getAddress())
+  blipp.goToBlipp(blipp.getAddress())
 }
