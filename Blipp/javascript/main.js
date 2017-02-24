@@ -346,14 +346,15 @@ scene.onCreate = function () {
     b.isSelected = false;
     b.onTouchEnd = function () {
       this.isSelected = !this.isSelected;
-      Telemetry('Tap_' + Drugs[this.n][0] + '_Animation_main_menu');
       if (this.n == 7) {
         for (var i = 0; i < Drugs.length; i++) {
           if (this.isSelected) {
+            Telemetry('Tap_' + Drugs[this.n][0] + '_Animation_main_menu_select');
             ButtonColors[i].isSelected = true;
             ButtonColors[i].setColor(Drugs[i][3])
             ButtonTexts[i].setActiveTexture(1).setColor(DrugsTextColor[1])
           } else {
+            Telemetry('Tap_' + Drugs[this.n][0] + '_Animation_main_menu_deselect');
             ButtonColors[i].isSelected = false;
             ButtonColors[i].setColor(DrugsDefaultColor)
             ButtonTexts[i].setActiveTexture(0).setColor(DrugsTextColor[0])
