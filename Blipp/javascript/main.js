@@ -579,5 +579,5 @@ scene.onTouchStart = function () {
 }
 
 scene.onTouchMove = function () {
-  blipp.goToBlipp(blipp.getAddress())
+  //blipp.goToBlipp(blipp.getAddress())
 }
