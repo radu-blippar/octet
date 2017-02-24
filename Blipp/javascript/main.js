@@ -103,7 +103,7 @@ var CurrentPopUps;
 var PopUpScaler = 0.7;
 
 function StartPopUp(popups, closeDark) {
-  if(!VisiblePopUp){
+  if (!VisiblePopUp) {
     VisiblePopUp = true;
     CurrentPopUps = popups;
     Dark.setHidden(false);
@@ -119,9 +119,9 @@ function StartPopUp(popups, closeDark) {
       CurrentPopUps[i].setScale(s)
       CurrentPopUps[i].animate().alpha(1).duration(500);
       CurrentPopUps[i].animate().duration(300)
-        .scaleX(s[0]/PopUpScaler)
-        .scaleY(s[1]/PopUpScaler)
-        .scaleZ(s[2]/PopUpScaler)
+        .scaleX(s[0] / PopUpScaler)
+        .scaleY(s[1] / PopUpScaler)
+        .scaleZ(s[2] / PopUpScaler)
         .interpolator('easeOut');
     }
     for (i = 0; i < Clickables.length; i++) {
@@ -162,40 +162,40 @@ function EndPopUp(next) {
     Clickables[i].setClickable(true);
   }
 
-  if(next && ActivePopUp<4){
-    scene.animate().duration(PopUpDelay * 1000).onEnd = function(){
+  if (next && ActivePopUp < 4) {
+    scene.animate().duration(PopUpDelay * 1000).onEnd = function () {
       NextPopUp();
     }
   }
 
-  if(!StartedPopUps){
+  if (!StartedPopUps) {
     StartedPopUps = true;
-    scene.animate().duration(PopUpDelay * 1000).onEnd = function(){
+    scene.animate().duration(PopUpDelay * 1000).onEnd = function () {
       NextPopUp();
     }
   }
 }
 
-function NextPopUp(){
+function NextPopUp() {
   console.log(ActivePopUp + " - " + VisiblePopUp)
-  if(!VisiblePopUp){
-    switch(ActivePopUp) {
+  if (!VisiblePopUp) {
+    switch (ActivePopUp) {
     case 0:
-        StartPopUp_0();
-        break;
+      StartPopUp_0();
+      break;
     case 1:
-        StartPopUp_1();
-        break;
+      StartPopUp_1();
+      break;
     case 2:
-        StartPopUp_2();
-        break;
+      StartPopUp_2();
+      break;
     case 3:
-        StartPopUp_3();
-        break;
-    } 
+      StartPopUp_3();
+      break;
+    }
   } else {
-    if(ActivePopUp<4){
-      scene.animate().duration(PopUpDelay * 1000).onEnd = function(){
+    if (ActivePopUp < 4) {
+      scene.animate().duration(PopUpDelay * 1000).onEnd = function () {
         NextPopUp();
       }
     }
@@ -215,7 +215,32 @@ scene.onCreate = function () {
 
   Screen = scene.getScreen().addTransform().setRotationZ(-90).setScale(sH / 1024);
 
-  Background = Screen.addSprite('Background.jpg').setScale(1024);
+  Background = Screen.addSprite('Background.jpg').setScale([(16 / 9) * 1024 * sW / sH, 1024 * sW / sH, 1]);
+
+  Background.CheckVideo = function () {
+    if (blipp.getAssetStat('BACKGROUND_looped.mp4') > 0) {
+      this.playVideo('BACKGROUND_looped.mp4', '', true, false, false);
+    } else {
+      scene.animate().duration(250).onEnd = function () {
+        Background.CheckVideo();
+      }
+    }
+  }
+
+  Background.onDraw = function () {
+    Background.CheckVideo();
+    blipp.downloadAssets(
+      '', ['BACKGROUND_looped.mp4'],
+      'get',
+      function (status, info) {
+        if (status == 'OK') {
+          console.log('BACKGROUND_looped.mp4: Download Done');
+        } else {
+          console.log('BACKGROUND_looped.mp4: Loaded ' + info + ' %');
+        }
+      }, "", false);
+    return 1
+  }
 
   Pulse = Screen.addSprite('trans.png');
 
@@ -531,7 +556,7 @@ scene.onCreate = function () {
     GlowDrugs()
   }
 }
-scene.onShow =  function(){
+scene.onShow = function () {
   Instructions_Button.animate().duration(500).interpolator("easeOut").translationX(Instructions_Button.getTranslationX() + 96);
   References_Button.animate().duration(500).delay(200).interpolator("easeOut").translationX(References_Button.getTranslationX() + 96);
 }
@@ -539,12 +564,12 @@ scene.onShow =  function(){
 var StartedPopUps = false;
 
 scene.onTouchStart = function () {
-  if(Clicks < MinClicksForPopUp && Clicks != -1){
+  if (Clicks < MinClicksForPopUp && Clicks != -1) {
     Clicks++;
   } else {
-    if(Clicks != -1){
-      scene.animate().duration(PopUpDelay*0.25*1000).onEnd = function(){
-        if(!VisiblePopUp){
+    if (Clicks != -1) {
+      scene.animate().duration(PopUpDelay * 0.25 * 1000).onEnd = function () {
+        if (!VisiblePopUp) {
           NextPopUp();
         }
       }
@@ -554,5 +579,5 @@ scene.onTouchStart = function () {
 }
 
 scene.onTouchMove = function () {
-  //blipp.goToBlipp(blipp.getAddress())
+  blipp.goToBlipp(blipp.getAddress())
 }
