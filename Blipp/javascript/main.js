@@ -7,6 +7,7 @@ var mH = blipp.getMarker().getHeight();
 var sW = blipp.getScreenWidth() * 1.003;
 var sH = blipp.getScreenHeight() * 1.003;
 
+var TelemetryID = "US_SANOFI_VIA_HAVAS_HEALTH_1612_OCTET";
 var DrugsHeight = 53;
 var DrugsY = -(0.5 * (1024 * sW / sH) - 288 + 256);
 var DrugsDefaultColor = 'ffffff';
@@ -20,7 +21,7 @@ var Drugs = [
   ['SGLT-2i', 133, 103, 'ffd100', [6]],
   ['Sulfonylurea', 133, 240, 'ff5e37', [0]],
   ['TZD', 133, 377, 'fc72a8', [3, 4, 7]],
-  ['ALL', 64, 480, '4da6d2']
+  ['All', 64, 480, '4da6d2']
 ];
 
 var Organs = [
@@ -70,6 +71,11 @@ var ActivePopUp = 0;
 var VisiblePopUp = false;
 var Clicks = 0;
 var MinClicksForPopUp = 2;
+
+function Telemetry(msg) {
+  console.log("TELEMETRY: " + msg)
+  blipp.telemetry(TelemetryID, msg);
+}
 
 function SetOrgans() {
   for (var i = 0; i < Organs.length; i++) {
@@ -340,7 +346,7 @@ scene.onCreate = function () {
     b.isSelected = false;
     b.onTouchEnd = function () {
       this.isSelected = !this.isSelected;
-
+      Telemetry('Tap_' + Drugs[this.n][0] + '_Animation_main_menu');
       if (this.n == 7) {
         for (var i = 0; i < Drugs.length; i++) {
           if (this.isSelected) {
@@ -426,6 +432,7 @@ scene.onCreate = function () {
     .setTranslationY(0.5 * (1024 * sW / sH) - 42);
 
   Instructions_Button.onTouchEnd = function () {
+    Telemetry('Tap_Instructions_Information_main_menu');
     StartPopUp([Instructions, Instructions_Button_ON], true)
   }
 
@@ -437,6 +444,7 @@ scene.onCreate = function () {
     .setTranslationY(0.5 * (1024 * sW / sH) - 98 - 10);
 
   References_Button.onTouchEnd = function () {
+    Telemetry('Tap_Reference_Information_main_menu');
     StartPopUp([References, References_Button_ON], true)
   }
 
@@ -494,7 +502,8 @@ scene.onCreate = function () {
     .setHidden(true);
 
   PopUp_1_Link.onTouchEnd = function () {
-    blipp.openURL('https://www.youtube.com/watch?v=wty7Tz0Nx34'); // !!! Replace video  link
+    Telemetry('Tap_Dr_Vivian_Fonseca_Video');
+    blipp.openURL('https://www.youtube.com/watch?v=wty7Tz0Nx34'); // !!! Replace video link
   }
 
   PopUp_1_Back.onTouchEnd = function () {
@@ -517,6 +526,7 @@ scene.onCreate = function () {
     .setHidden(true);
 
   PopUp_2_Link.onTouchEnd = function () {
+    Telemetry('Tap_Glycemic_Explorer_Web_links');
     blipp.openURL('https://www.glycemicexplorer.com/')
   }
 
@@ -540,7 +550,8 @@ scene.onCreate = function () {
     .setHidden(true);
 
   PopUp_3_Link.onTouchEnd = function () {
-    blipp.openURL('https://www.glycemicexplorer.com/')
+    Telemetry('Show_T2DM_Uncontrolled_Information');
+    blipp.openURL('https://www.glycemicexplorer.com/'); // !!! Replace link
   }
 
   PopUp_3_Back.onTouchEnd = function () {
