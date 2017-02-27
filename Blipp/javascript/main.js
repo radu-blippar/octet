@@ -55,6 +55,7 @@ var Buttons = [];
 var ButtonTexts = [];
 var ButtonColors = [];
 var DrugGlows = [];
+var DrugTextGlows = [];
 
 var Icons = [];
 var IconSegments = [];
@@ -211,6 +212,7 @@ function NextPopUp() {
 function GlowDrugs() {
   for (i = 0; i < DrugGlows.length; i++) {
     DrugGlows[i].onDraw();
+    DrugTextGlows[i].onDraw();
   }
 }
 
@@ -382,7 +384,7 @@ scene.onCreate = function () {
     glow = b.addSprite().setColor(Drugs[i][3]).setAlpha(0);
     glow.n = i;
     glow.onDraw = function () {
-      this.animate().alpha(0.5).duration(600).delay(this.n * 100).onEnd = function () {
+      this.animate().alpha(0.6).duration(600).delay(this.n * 100).onEnd = function () {
         this.animate().alpha(0).duration(600);
       }
       return 1
@@ -398,8 +400,27 @@ scene.onCreate = function () {
       .setActiveTexture(0)
       .setColor(DrugsTextColor[0]);
 
+    textGlow = t.addSprite()
+      .setScale(128, 32, 1)
+      .setTextures([
+        ['White_128x32.png', 'Drug' + i + '.png'],
+        ['White_128x32.png', 'Drug' + i + 's.png']
+      ])
+      .setTexturesPreload(true)
+      .setActiveTexture(1)
+      .setAlpha(0)
+      .setColor(DrugsTextColor[1]);
+    textGlow.n = i;
+    textGlow.onDraw = function () {
+      this.animate().alpha(1).duration(600).delay(this.n * 100).onEnd = function () {
+        this.animate().alpha(0).duration(600);
+      }
+      return 1
+    }
+
     ButtonColors.push(b);
     DrugGlows.push(glow);
+    DrugTextGlows.push(textGlow);
     Clickables.push(b);
     ButtonTexts.push(text);
     Buttons.push(t);
@@ -504,7 +525,7 @@ scene.onCreate = function () {
 
   PopUp_1_Link.onTouchEnd = function () {
     Telemetry('Tap_Dr_Vivian_Fonseca_Video');
-    blipp.openURL('https://www.youtube.com/watch?v=wty7Tz0Nx34'); // !!! Replace video link
+    blipp.openURL('https://www.glycemicexplorer.com/diabetes-video-library/treatment-guidelines');
   }
 
   PopUp_1_Back.onTouchEnd = function () {
@@ -552,7 +573,7 @@ scene.onCreate = function () {
 
   PopUp_3_Link.onTouchEnd = function () {
     Telemetry('Show_T2DM_Uncontrolled_Information');
-    blipp.openURL('https://www.glycemicexplorer.com/'); // !!! Replace link
+    blipp.openURL('https://www.glycemicexplorer.com/type-2-diabetes-treatment'); // !!! Replace link
   }
 
   PopUp_3_Back.onTouchEnd = function () {
