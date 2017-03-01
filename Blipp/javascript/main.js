@@ -573,7 +573,7 @@ scene.onCreate = function () {
 
   PopUp_3_Link.onTouchEnd = function () {
     Telemetry('Show_T2DM_Uncontrolled_Information');
-    blipp.openURL('https://www.glycemicexplorer.com/type-2-diabetes-treatment'); // !!! Replace link
+    blipp.openURL('https://www.glycemicexplorer.com/');
   }
 
   PopUp_3_Back.onTouchEnd = function () {
