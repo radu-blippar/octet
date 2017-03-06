@@ -78,29 +78,27 @@ function Telemetry(msg) {
   blipp.telemetry(TelemetryID, msg);
 }
 
-function SetOrgans() {
-  for (var i = 0; i < Organs.length; i++) {
-    for (var j = 0; j < Drugs.length - 1; j++) {
-      IconSegments[i][j].setColor(DrugsTextColor[1]).setAlpha(0.3);
-    }
-    IconOrgans[i].setColor(DrugsTextColor[1]).setAlpha(0.75);
-    IconGlows[i].setAlpha(0);
-  }
-
+function SetOrgans(tap) {
   for (var i = 0; i < Drugs.length - 1; i++) {
     if (ButtonColors[i].isSelected) {
       for (var j = 0; j < Drugs[i][4].length; j++) {
         var n = Drugs[i][4][j];
-        IconSegments[n][i].setColor(Drugs[i][3]).setAlpha(1);
-        IconOrgans[n].setColor(DrugsTextColor[0]).setAlpha(1);
-        if (!IconGlows[n].isPulsing) {
+        if (IconSegments[n][i].getAlpha() < 0.9) {
           IconPivots[n].animate().scale(1.414).duration(250).interpolator('easeInOut').onEnd = function () {
             this.animate().scale(1).duration(500).interpolator('easeInOut')
           }
         }
+        IconSegments[n][i].setColor(Drugs[i][3]).setAlpha(1);
+        IconOrgans[n].setColor(DrugsTextColor[0]).setAlpha(1);
         IconGlows[n].setAlpha(1);
         IconGlows[n].newPulse = true;
         IconGlows[n].isPulsing = true;
+      }
+    } else {
+      for (var j = 0; j < Organs.length; j++) {
+        IconSegments[j][i].setColor(DrugsTextColor[1]).setAlpha(0.3);
+        IconOrgans[j].setColor(DrugsTextColor[1]).setAlpha(0.75);
+        IconGlows[j].setAlpha(0);
       }
     }
   }
@@ -378,7 +376,7 @@ scene.onCreate = function () {
         }
       }
 
-      SetOrgans()
+      SetOrgans(this.n)
     }
 
     glow = b.addSprite().setColor(Drugs[i][3]).setAlpha(0);
@@ -612,5 +610,5 @@ scene.onTouchStart = function () {
 }
 
 scene.onTouchMove = function () {
-  //blipp.goToBlipp(blipp.getAddress())
+  blipp.goToBlipp(blipp.getAddress())
 }
