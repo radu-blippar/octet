@@ -238,7 +238,6 @@ scene.onCreate = function () {
   */
 
   Background.onDraw = function () {
-    this.playVideo('BACKGROUND_looped.mp4', '', true, false, false);
     /*
     Background.CheckVideo();
     blipp.downloadAssets(
@@ -251,8 +250,9 @@ scene.onCreate = function () {
           console.log('BACKGROUND_looped.mp4: Loaded ' + info + ' %');
         }
       }, "", false);
-    return 1
     */
+    this.playVideo('BACKGROUND_looped.mp4', '', true, false, false);
+    return 1
   }
 
   Pulse = Screen.addSprite('trans.png');
