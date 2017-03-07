@@ -1,6 +1,8 @@
 var blipp = require('blippar').blipp;
 scene = blipp.addScene();
 
+scene.addRequiredAssets('BACKGROUND_looped.mp4');
+
 // Global variables
 var mW = blipp.getMarker().getWidth();
 var mH = blipp.getMarker().getHeight();
@@ -223,6 +225,7 @@ scene.onCreate = function () {
 
   Background = Screen.addSprite('Background.jpg').setScale([(16 / 9) * 1024 * sW / sH, 1024 * sW / sH, 1]);
 
+  /*
   Background.CheckVideo = function () {
     if (blipp.getAssetStat('BACKGROUND_looped.mp4') > 0) {
       this.playVideo('BACKGROUND_looped.mp4', '', true, false, false);
@@ -232,8 +235,11 @@ scene.onCreate = function () {
       }
     }
   }
+  */
 
   Background.onDraw = function () {
+    this.playVideo('BACKGROUND_looped.mp4', '', true, false, false);
+    /*
     Background.CheckVideo();
     blipp.downloadAssets(
       '', ['BACKGROUND_looped.mp4'],
@@ -246,6 +252,7 @@ scene.onCreate = function () {
         }
       }, "", false);
     return 1
+    */
   }
 
   Pulse = Screen.addSprite('trans.png');
@@ -308,7 +315,7 @@ scene.onCreate = function () {
     g.newPulse = false;
     g.isPulsing = false;
 
-    o = t_pivot.addSprite(['White_128x128.png', 'Organ' + i + '.png'])
+    o = t_pivot.addSprite(['White_256x256.png', 'Organ' + i + '.png'])
       .setAlpha(0.75).setScale(128)
 
     name = t.addSprite(['Organ' + i + '_name.png', 'Organ' + i + '_name-A.png'])
@@ -319,7 +326,7 @@ scene.onCreate = function () {
     var segs = [];
 
     for (var j = 0; j < Drugs.length - 1; j++) {
-      var s = t_pivot.addSprite(['White_128x128.png', 'OrganSegment.png'])
+      var s = t_pivot.addSprite(['White_256x256.png', 'OrganSegment.png'])
         .setAlpha(0.3).setScale(128).setRotationZ(-j * 360 / (Drugs.length - 1));
       s.Color = Drugs[j][3];
       segs.push(s);
@@ -391,8 +398,8 @@ scene.onCreate = function () {
     text = t.addSprite()
       .setScale(128, 32, 1)
       .setTextures([
-        ['White_128x32.png', 'Drug' + i + '.png'],
-        ['White_128x32.png', 'Drug' + i + 's.png']
+        ['White_256X64.png', 'Drug' + i + '.png'],
+        ['White_256X64.png', 'Drug' + i + 's.png']
       ])
       .setTexturesPreload(true)
       .setActiveTexture(0)
@@ -401,8 +408,8 @@ scene.onCreate = function () {
     textGlow = t.addSprite()
       .setScale(128, 32, 1)
       .setTextures([
-        ['White_128x32.png', 'Drug' + i + '.png'],
-        ['White_128x32.png', 'Drug' + i + 's.png']
+        ['White_256X64.png', 'Drug' + i + '.png'],
+        ['White_256X64.png', 'Drug' + i + 's.png']
       ])
       .setTexturesPreload(true)
       .setActiveTexture(1)
