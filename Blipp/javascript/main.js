@@ -320,8 +320,8 @@ scene.onCreate = function () {
 
     name = t.addSprite(['Organ' + i + '_name.png', 'Organ' + i + '_name-A.png'])
       .setScale([128, 32, 1])
-      .setTranslationX(Organs[i][2][0])
-      .setTranslationY(Organs[i][2][1]);
+      .setTranslationX(Organs[i][2][0] * 1.08)
+      .setTranslationY(Organs[i][2][1] * 1.08);
 
     var segs = [];
 
@@ -617,5 +617,5 @@ scene.onTouchStart = function () {
 }
 
 scene.onTouchMove = function () {
-  blipp.goToBlipp(blipp.getAddress())
+  //blipp.goToBlipp(blipp.getAddress())
 }
