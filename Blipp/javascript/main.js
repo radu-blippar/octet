@@ -69,7 +69,7 @@ var Clickables = [];
 
 var OrganWobbleRadius = 4;
 var OrganWobbleTime = 12; // Frames
-var PopUpDelay = 8; // s
+var PopUpDelay = 20; // s
 var ActivePopUp = 0;
 var VisiblePopUp = false;
 var Clicks = 0;
@@ -81,6 +81,10 @@ function Telemetry(msg) {
 }
 
 function SetOrgans(tap) {
+  for (var j = 0; j < Organs.length; j++) {
+    IconGlows[j].setAlpha(0);
+    IconOrgans[j].setColor(DrugsTextColor[1]).setAlpha(0.75);
+  }
   for (var i = 0; i < Drugs.length - 1; i++) {
     if (ButtonColors[i].isSelected) {
       for (var j = 0; j < Drugs[i][4].length; j++) {
@@ -99,8 +103,6 @@ function SetOrgans(tap) {
     } else {
       for (var j = 0; j < Organs.length; j++) {
         IconSegments[j][i].setColor(DrugsTextColor[1]).setAlpha(0.3);
-        IconOrgans[j].setColor(DrugsTextColor[1]).setAlpha(0.75);
-        IconGlows[j].setAlpha(0);
       }
     }
   }
@@ -504,9 +506,8 @@ scene.onCreate = function () {
     .setScale(1024, 512, 1).setHidden(true);
 
   PopUp_0_Back = PopUp_0.addSprite('trans.png')
-    .setScale(300 / 1024, 42 / 512, 1)
-    .setTranslationX(234 / 1024)
-    .setTranslationY(-83 / 512)
+    .setScale(1, 2, 1)
+    .setTranslationZ(-20)
     .setHidden(true);
 
   PopUp_0_Back.onTouchEnd = function () {
@@ -517,15 +518,14 @@ scene.onCreate = function () {
     .setScale(1024, 512, 1).setHidden(true);
 
   PopUp_1_Link = PopUp_1.addSprite('trans.png')
-    .setScale(480 / 1024, 42 / 512, 1)
+    .setScale(480 / 1024, 63 / 512, 1)
     .setTranslationX(140 / 1024)
-    .setTranslationY(-42 / 512)
+    .setTranslationY(-30 / 512)
     .setHidden(true);
 
   PopUp_1_Back = PopUp_1.addSprite('trans.png')
-    .setScale(300 / 1024, 42 / 512, 1)
-    .setTranslationX(234 / 1024)
-    .setTranslationY(-84 / 512)
+    .setScale(1, 2, 1)
+    .setTranslationZ(-20)
     .setHidden(true);
 
   PopUp_1_Link.onTouchEnd = function () {
@@ -541,15 +541,14 @@ scene.onCreate = function () {
     .setScale(1024, 512, 1).setHidden(true);
 
   PopUp_2_Link = PopUp_2.addSprite('trans.png')
-    .setScale(480 / 1024, 42 / 512, 1)
+    .setScale(480 / 1024, 63 / 512, 1)
     .setTranslationX(140 / 1024)
-    .setTranslationY(-42 / 512)
+    .setTranslationY(-30 / 512)
     .setHidden(true);
 
   PopUp_2_Back = PopUp_2.addSprite('trans.png')
-    .setScale(300 / 1024, 42 / 512, 1)
-    .setTranslationX(234 / 1024)
-    .setTranslationY(-84 / 512)
+    .setScale(1, 2, 1)
+    .setTranslationZ(-20)
     .setHidden(true);
 
   PopUp_2_Link.onTouchEnd = function () {
@@ -565,15 +564,14 @@ scene.onCreate = function () {
     .setScale(1024, 512, 1).setHidden(true);
 
   PopUp_3_Link = PopUp_3.addSprite('trans.png')
-    .setScale(480 / 1024, 42 / 512, 1)
+    .setScale(480 / 1024, 63 / 512, 1)
     .setTranslationX(140 / 1024)
-    .setTranslationY(-42 / 512)
+    .setTranslationY(-30 / 512)
     .setHidden(true);
 
   PopUp_3_Back = PopUp_3.addSprite('trans.png')
-    .setScale(300 / 1024, 42 / 512, 1)
-    .setTranslationX(234 / 1024)
-    .setTranslationY(-84 / 512)
+    .setScale(1, 2, 1)
+    .setTranslationZ(-20)
     .setHidden(true);
 
   PopUp_3_Link.onTouchEnd = function () {
@@ -617,5 +615,5 @@ scene.onTouchStart = function () {
 }
 
 scene.onTouchMove = function () {
-  //blipp.goToBlipp(blipp.getAddress())
+  blipp.goToBlipp(blipp.getAddress())
 }
