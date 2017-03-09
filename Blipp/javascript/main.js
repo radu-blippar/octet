@@ -388,14 +388,20 @@ scene.onCreate = function () {
       SetOrgans(this.n)
     }
 
+    ButtonColors.push(b);
+
     glow = b.addSprite().setColor(Drugs[i][3]).setAlpha(0);
+    glow.defaultColor = Drugs[i][3];
     glow.n = i;
     glow.onDraw = function () {
+      this.setColor(ButtonColors[this.n].isSelected ? 'ffffff' : this.defaultColor).setAlpha(0);
       this.animate().alpha(0.6).duration(600).delay(this.n * 100).onEnd = function () {
         this.animate().alpha(0).duration(600);
       }
       return 1
     }
+
+    DrugGlows.push(glow);
 
     text = t.addSprite()
       .setScale(128, 32, 1)
@@ -419,14 +425,13 @@ scene.onCreate = function () {
       .setColor(DrugsTextColor[1]);
     textGlow.n = i;
     textGlow.onDraw = function () {
+      this.setColor(DrugsTextColor[ButtonColors[this.n].isSelected ? 0 : 1]).setAlpha(0);
       this.animate().alpha(1).duration(600).delay(this.n * 100).onEnd = function () {
         this.animate().alpha(0).duration(600);
       }
       return 1
     }
 
-    ButtonColors.push(b);
-    DrugGlows.push(glow);
     DrugTextGlows.push(textGlow);
     Clickables.push(b);
     ButtonTexts.push(text);
