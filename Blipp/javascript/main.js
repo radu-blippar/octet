@@ -69,7 +69,7 @@ var Clickables = [];
 
 var OrganWobbleRadius = 4;
 var OrganWobbleTime = 12; // Frames
-var PopUpDelay = 20; // s
+var PopUpDelay = 15; // s
 var ActivePopUp = 0;
 var VisiblePopUp = false;
 var Clicks = 0;
@@ -615,5 +615,5 @@ scene.onTouchStart = function () {
 }
 
 scene.onTouchMove = function () {
-  blipp.goToBlipp(blipp.getAddress())
+  //blipp.goToBlipp(blipp.getAddress())
 }
