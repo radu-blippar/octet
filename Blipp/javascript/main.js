@@ -289,6 +289,7 @@ scene.onCreate = function () {
     t_pivot.wobble = 0;
 
     t_pivot.onUpdate = function () {
+      /*
       if (IconGlows[this.n].getAlpha() != 0) {
         if (IconGlows[this.n].newPulse) {
           IconGlows[this.n].newPulse = false;
@@ -302,15 +303,16 @@ scene.onCreate = function () {
           }
         }
       } else {
+        */
         this.wobble++;
-        IconGlows[this.n].isPulsing = false;
+        //IconGlows[this.n].isPulsing = false;
         if (this.wobble >= OrganWobbleTime) {
           this.wobble = 0;
           this.animate().duration(OrganWobbleTime * 1000 / 30)
             .translationX(OrganWobbleRadius * (Math.random() - 0.5))
             .translationY(OrganWobbleRadius * (Math.random() - 0.5));
         }
-      }
+      //}
     }
 
     g = t_pivot.addSprite(['White_256x256.png', 'OrganGlow.jpg']).setScale(256).setAlpha(0);
