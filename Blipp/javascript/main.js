@@ -23,7 +23,7 @@ var Drugs = [
   ['SGLT-2i', 133, 103, 'ffd100', [6]],
   ['Sulfonylurea', 133, 240, 'ff5e37', [0]],
   ['TZD', 133, 377, 'fc72a8', [3, 4, 7]],
-  ['All', 64, 480, '4da6d2']
+  ['All', 64, 480, '4da6d2', [0, 1, 2, 3, 4, 5, 6, 7]]
 ];
 
 var Organs = [
@@ -89,7 +89,7 @@ function SetOrgans(tap) {
     if (ButtonColors[i].isSelected) {
       for (var j = 0; j < Drugs[i][4].length; j++) {
         var n = Drugs[i][4][j];
-        if (IconSegments[n][i].getAlpha() < 0.9) {
+        if (IconSegments[n][i].getAlpha() < 0.9 || tap == 7) {
           IconPivots[n].animate().scale(1.414).duration(250).interpolator('easeInOut').onEnd = function () {
             this.animate().scale(1).duration(500).interpolator('easeInOut')
           }
