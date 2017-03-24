@@ -77,6 +77,7 @@ var SecondsSpan = 15;
 var ActivePopUp = false;
 var VisiblePopUp = false;
 var InfoPopup = false;
+var InfoTime = 0;
 
 function Telemetry(msg) {
   console.log("TELEMETRY: " + msg)
@@ -116,8 +117,10 @@ function StartPopUp(popups, closeDark) {
   CurrentPopUps = popups;
   Dark.setHidden(false);
   Dark.setAlpha(0);
-  Dark.animate().alpha(0.6).duration(500);
-  Dark.setClickable(closeDark);
+  Dark.setClickable(false);
+  Dark.animate().alpha(0.6).duration(1000).onEnd = function () {
+    Dark.setClickable(closeDark);
+  };
   for (i = 0; i < CurrentPopUps.length; i++) {
     CurrentPopUps[i].setHidden(false).setAlpha(0);
     var s = CurrentPopUps[i].getScale();
@@ -165,6 +168,9 @@ function StartPopUp_3() {
 function EndPopUp() {
   if (ActivePopUp) {
     Seconds--;
+  }
+  if (InfoPopup) {
+    Seconds = InfoTime;
   }
   ActivePopUp = false;
   InfoPopup = false;
@@ -430,6 +436,7 @@ scene.onCreate = function () {
     Telemetry('Tap_Instructions_Information_main_menu');
     ActivePopUp = false;
     InfoPopup = true;
+    InfoTime = Seconds;
     StartPopUp([Instructions, Instructions_Button_ON], true)
   }
 
@@ -444,6 +451,7 @@ scene.onCreate = function () {
     Telemetry('Tap_Reference_Information_main_menu');
     ActivePopUp = false;
     InfoPopup = true;
+    InfoTime = Seconds;
     StartPopUp([References, References_Button_ON], true)
   }
 
