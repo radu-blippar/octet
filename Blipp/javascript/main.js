@@ -69,11 +69,14 @@ var Clickables = [];
 
 var OrganWobbleRadius = 4;
 var OrganWobbleTime = 12; // Frames
-var PopUpDelay = 15; // s
-var ActivePopUp = 0;
+
+var CurrentPopUps;
+var PopUpScaler = 0.7;
+var Seconds = 0;
+var SecondsSpan = 15;
+var ActivePopUp = false;
 var VisiblePopUp = false;
-var Clicks = 0;
-var MinClicksForPopUp = 2;
+var InfoPopup = false;
 
 function Telemetry(msg) {
   console.log("TELEMETRY: " + msg)
@@ -108,60 +111,63 @@ function SetOrgans(tap) {
   }
 }
 
-var CurrentPopUps;
-var PopUpScaler = 0.7;
-
 function StartPopUp(popups, closeDark) {
-  if (!VisiblePopUp) {
-    VisiblePopUp = true;
-    CurrentPopUps = popups;
-    Dark.setHidden(false);
-    Dark.setAlpha(0);
-    Dark.animate().alpha(0.6).duration(500);
-    Dark.setClickable(closeDark);
-    for (i = 0; i < CurrentPopUps.length; i++) {
-      CurrentPopUps[i].setHidden(false).setAlpha(0);
-      var s = CurrentPopUps[i].getScale();
-      s[0] *= PopUpScaler;
-      s[1] *= PopUpScaler;
-      s[2] *= PopUpScaler;
-      CurrentPopUps[i].setScale(s)
-      CurrentPopUps[i].animate().alpha(1).duration(500);
-      CurrentPopUps[i].animate().duration(300)
-        .scaleX(s[0] / PopUpScaler)
-        .scaleY(s[1] / PopUpScaler)
-        .scaleZ(s[2] / PopUpScaler)
-        .interpolator('easeOut');
-    }
-    for (i = 0; i < Clickables.length; i++) {
-      Clickables[i].setClickable(false);
-    }
-    Close_Button.OFF();
+  Seconds++;
+  CurrentPopUps = popups;
+  Dark.setHidden(false);
+  Dark.setAlpha(0);
+  Dark.animate().alpha(0.6).duration(500);
+  Dark.setClickable(closeDark);
+  for (i = 0; i < CurrentPopUps.length; i++) {
+    CurrentPopUps[i].setHidden(false).setAlpha(0);
+    var s = CurrentPopUps[i].getScale();
+    s[0] *= PopUpScaler;
+    s[1] *= PopUpScaler;
+    s[2] *= PopUpScaler;
+    CurrentPopUps[i].setScale(s)
+    CurrentPopUps[i].animate().alpha(1).duration(500);
+    CurrentPopUps[i].animate().duration(300)
+      .scaleX(s[0] / PopUpScaler)
+      .scaleY(s[1] / PopUpScaler)
+      .scaleZ(s[2] / PopUpScaler)
+      .interpolator('easeOut');
   }
+  for (i = 0; i < Clickables.length; i++) {
+    Clickables[i].setClickable(false);
+  }
+  Close_Button.OFF();
 }
 
 function StartPopUp_0() {
-  ActivePopUp++
+  ActivePopUp = true;
+  InfoPopup = false;
   StartPopUp([PopUp_0, PopUp_0_Back], false)
 }
 
 function StartPopUp_1() {
-  ActivePopUp++
+  ActivePopUp = true;
+  InfoPopup = false;
   StartPopUp([PopUp_1, PopUp_1_Back, PopUp_1_Link], false)
 }
 
 function StartPopUp_2() {
-  ActivePopUp++
+  ActivePopUp = true;
+  InfoPopup = false;
   StartPopUp([PopUp_2, PopUp_2_Back, PopUp_2_Link], false)
 }
 
 function StartPopUp_3() {
-  ActivePopUp++
+  ActivePopUp = true;
+  InfoPopup = false;
   StartPopUp([PopUp_3, PopUp_3_Back, PopUp_3_Link], false)
 }
 
-function EndPopUp(next) {
-  VisiblePopUp = false;
+function EndPopUp() {
+  if (ActivePopUp) {
+    Seconds--;
+  }
+  ActivePopUp = false;
+  InfoPopup = false;
   Close_Button.ON();
   Dark.setHidden(true);
   for (i = 0; i < CurrentPopUps.length; i++) {
@@ -170,51 +176,46 @@ function EndPopUp(next) {
   for (i = 0; i < Clickables.length; i++) {
     Clickables[i].setClickable(true);
   }
-
-  if (next && ActivePopUp < 4) {
-    scene.animate().duration(PopUpDelay * 1000).onEnd = function () {
-      NextPopUp();
-    }
-  }
-
-  if (!StartedPopUps) {
-    StartedPopUps = true;
-    scene.animate().duration(PopUpDelay * 1000).onEnd = function () {
-      NextPopUp();
-    }
-  }
-}
-
-function NextPopUp() {
-  console.log(ActivePopUp + " - " + VisiblePopUp)
-  if (!VisiblePopUp) {
-    switch (ActivePopUp) {
-    case 0:
-      StartPopUp_0();
-      break;
-    case 1:
-      StartPopUp_1();
-      break;
-    case 2:
-      StartPopUp_2();
-      break;
-    case 3:
-      StartPopUp_3();
-      break;
-    }
-  } else {
-    if (ActivePopUp < 4) {
-      scene.animate().duration(PopUpDelay * 1000).onEnd = function () {
-        NextPopUp();
-      }
-    }
-  }
 }
 
 function GlowDrugs() {
   for (i = 0; i < DrugGlows.length; i++) {
     DrugGlows[i].onDraw();
     DrugTextGlows[i].onDraw();
+  }
+}
+
+function Tick() {
+  if (!ActivePopUp && !InfoPopup) {
+    Seconds++;
+  }
+
+  if (ActivePopUp) {
+    Seconds = SecondsSpan * (Math.floor(Seconds / SecondsSpan)) + 1;
+  }
+
+  console.log(Seconds)
+
+  if (Seconds == SecondsSpan * 1) {
+    StartPopUp_0()
+  }
+
+  if (Seconds == SecondsSpan * 2) {
+    StartPopUp_1()
+  }
+
+  if (Seconds == SecondsSpan * 3) {
+    StartPopUp_2()
+  }
+
+  if (Seconds == SecondsSpan * 4) {
+    StartPopUp_3()
+  }
+
+  if (Seconds < SecondsSpan * 4 + 2) {
+    scene.animate().delay(1000).onEnd = function () {
+      Tick()
+    }
   }
 }
 
@@ -227,32 +228,7 @@ scene.onCreate = function () {
 
   Background = Screen.addSprite('Background.jpg').setScale([(16 / 9) * 1024 * sW / sH, 1024 * sW / sH, 1]);
 
-  /*
-  Background.CheckVideo = function () {
-    if (blipp.getAssetStat('BACKGROUND_looped.mp4') > 0) {
-      this.playVideo('BACKGROUND_looped.mp4', '', true, false, false);
-    } else {
-      scene.animate().duration(250).onEnd = function () {
-        Background.CheckVideo();
-      }
-    }
-  }
-  */
-
   Background.onDraw = function () {
-    /*
-    Background.CheckVideo();
-    blipp.downloadAssets(
-      '', ['BACKGROUND_looped.mp4'],
-      'get',
-      function (status, info) {
-        if (status == 'OK') {
-          console.log('BACKGROUND_looped.mp4: Download Done');
-        } else {
-          console.log('BACKGROUND_looped.mp4: Loaded ' + info + ' %');
-        }
-      }, "", false);
-    */
     this.playVideo('BACKGROUND_looped.mp4', '', true, false, false);
     return 1
   }
@@ -289,30 +265,13 @@ scene.onCreate = function () {
     t_pivot.wobble = 0;
 
     t_pivot.onUpdate = function () {
-      /*
-      if (IconGlows[this.n].getAlpha() != 0) {
-        if (IconGlows[this.n].newPulse) {
-          IconGlows[this.n].newPulse = false;
-          this.animate().duration(OrganWobbleTime * 1000 / 30)
-            .translationX(0)
-            .translationY(0);
-        } else {
-          if (this.getScale()[0] <= 1) {
-            IconGlows[this.n].isPulsing = true;
-            this.setScale(Pulse.getScale()[0]);
-          }
-        }
-      } else {
-        */
-        this.wobble++;
-        //IconGlows[this.n].isPulsing = false;
-        if (this.wobble >= OrganWobbleTime) {
-          this.wobble = 0;
-          this.animate().duration(OrganWobbleTime * 1000 / 30)
-            .translationX(OrganWobbleRadius * (Math.random() - 0.5))
-            .translationY(OrganWobbleRadius * (Math.random() - 0.5));
-        }
-      //}
+      this.wobble++;
+      if (this.wobble >= OrganWobbleTime) {
+        this.wobble = 0;
+        this.animate().duration(OrganWobbleTime * 1000 / 30)
+          .translationX(OrganWobbleRadius * (Math.random() - 0.5))
+          .translationY(OrganWobbleRadius * (Math.random() - 0.5));
+      }
     }
 
     g = t_pivot.addSprite(['White_256x256.png', 'OrganGlow.jpg']).setScale(256).setAlpha(0);
@@ -469,6 +428,8 @@ scene.onCreate = function () {
 
   Instructions_Button.onTouchEnd = function () {
     Telemetry('Tap_Instructions_Information_main_menu');
+    ActivePopUp = false;
+    InfoPopup = true;
     StartPopUp([Instructions, Instructions_Button_ON], true)
   }
 
@@ -481,6 +442,8 @@ scene.onCreate = function () {
 
   References_Button.onTouchEnd = function () {
     Telemetry('Tap_Reference_Information_main_menu');
+    ActivePopUp = false;
+    InfoPopup = true;
     StartPopUp([References, References_Button_ON], true)
   }
 
@@ -488,7 +451,7 @@ scene.onCreate = function () {
     .setAlpha(0.6).setHidden(true);
 
   Dark.onTouchEnd = function () {
-    EndPopUp(false)
+    EndPopUp()
   }
 
   Instructions = Screen.addSprite(['Instructions.png', 'Instructions-A.png'])
@@ -518,7 +481,7 @@ scene.onCreate = function () {
     .setHidden(true);
 
   PopUp_0_Back.onTouchEnd = function () {
-    EndPopUp(true);
+    EndPopUp();
   }
 
   PopUp_1 = Screen.addSprite(['PopUp_1.png', 'PopUp-A.png'])
@@ -541,7 +504,7 @@ scene.onCreate = function () {
   }
 
   PopUp_1_Back.onTouchEnd = function () {
-    EndPopUp(true);
+    EndPopUp();
   }
 
   PopUp_2 = Screen.addSprite(['PopUp_2.png', 'PopUp-A.png'])
@@ -564,7 +527,7 @@ scene.onCreate = function () {
   }
 
   PopUp_2_Back.onTouchEnd = function () {
-    EndPopUp(true);
+    EndPopUp();
   }
 
   PopUp_3 = Screen.addSprite(['PopUp_3.png', 'PopUp-A.png'])
@@ -587,7 +550,7 @@ scene.onCreate = function () {
   }
 
   PopUp_3_Back.onTouchEnd = function () {
-    EndPopUp(true);
+    EndPopUp();
   }
 
   Clickables.push(Instructions_Button);
@@ -602,23 +565,7 @@ scene.onCreate = function () {
 scene.onShow = function () {
   Instructions_Button.animate().duration(500).interpolator("easeOut").translationX(Instructions_Button.getTranslationX() + 96);
   References_Button.animate().duration(500).delay(200).interpolator("easeOut").translationX(References_Button.getTranslationX() + 96);
-}
-
-var StartedPopUps = false;
-
-scene.onTouchStart = function () {
-  if (Clicks < MinClicksForPopUp && Clicks != -1) {
-    Clicks++;
-  } else {
-    if (Clicks != -1) {
-      scene.animate().duration(PopUpDelay * 0.25 * 1000).onEnd = function () {
-        if (!VisiblePopUp) {
-          NextPopUp();
-        }
-      }
-    }
-    Clicks = -1;
-  }
+  Tick();
 }
 
 scene.onTouchMove = function () {

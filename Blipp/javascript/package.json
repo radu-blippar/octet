@@ -1,10 +1,10 @@
 {
     "version": "1.0.0",
-    "description": "Octet",
+    "description": "Ominous Octet",
     "main": "main.js",
     "blipp" : {
-      "title": "Octet",
-      "shortTitle": "Octet"
+      "title": "Ominous Octet",
+      "shortTitle": "Ominous Octet"
     },
     "dependencies": {
       "blippar": "1.4.6"
